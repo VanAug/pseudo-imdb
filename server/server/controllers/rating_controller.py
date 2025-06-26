@@ -21,6 +21,13 @@ def create_rating():
     favorite = Favorite.query.filter_by(id=favorite_id, user_id=user_id).first()
     if not favorite:
         return jsonify({"error": "Favorite not found or not yours"}), 404
+    
+    existing_rating = Rating.query.filter_by(
+        user_id=user_id,
+        favorite_id=favorite_id
+    ).first()
+    if existing_rating:
+        return jsonify({"error": "You've already rated this movie"}), 409
 
     # Optional: validate score
     if not (1 <= score <= 10):
