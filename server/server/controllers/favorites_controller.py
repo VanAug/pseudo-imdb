@@ -1,9 +1,8 @@
 # routes/favorites.py
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from server.models.favorites import Favorite, db
+from server.models.favorites import Favorite
 from server.models import db
-from models.user import User
 
 favorites_bp = Blueprint('favorites', __name__)
 
