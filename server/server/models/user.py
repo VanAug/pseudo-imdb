@@ -12,6 +12,8 @@ class User(db.Model):
     _password_hash = db.Column(db.Text, nullable=False)
 
     ratings = db.relationship('Rating', backref='user', cascade="all, delete-orphan")
+    favorites = db.relationship('Favorite', back_populates='user', cascade="all, delete-orphan")
+
 
     def set_password(self, password):
         self._password_hash = generate_password_hash(password)

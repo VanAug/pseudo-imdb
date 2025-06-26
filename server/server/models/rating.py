@@ -1,4 +1,3 @@
-
 from server.models import db
 
 class Rating(db.Model):
@@ -9,7 +8,7 @@ class Rating(db.Model):
     review = db.Column(db.Text, nullable=False)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    movie_id = db.Column(db.Integer, db.ForeignKey('movies.id'), nullable=False)
+    favorite_id = db.Column(db.Integer, db.ForeignKey('favorites.id'), nullable=False)
 
     def to_dict(self):
         return {
@@ -17,5 +16,5 @@ class Rating(db.Model):
             "score": self.score,
             "review": self.review,
             "user_id": self.user_id,
-            "movie_id": self.movie_id,
+            "favorite_id": self.favorite_id,
         }
