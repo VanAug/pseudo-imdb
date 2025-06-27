@@ -43,7 +43,6 @@ export async function fetchMoviesByGenre(genreId) {
   return data.results;
 }
 
-// Movie Details
 export async function fetchMovieDetails(id) {
   const res = await fetch(`${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US`);
   return res.json();
