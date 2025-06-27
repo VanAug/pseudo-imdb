@@ -19,7 +19,7 @@ const AppRoutes = () => {
           element={<Favorites />}
         />
         <Route 
-          path='profile'
+          path='profile/:id'
           element={<Profile />}
         />
         <Route 

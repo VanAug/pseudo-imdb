@@ -76,3 +76,15 @@
   color: #1db954;
   background-color: #282828;
 }
+
+.logout-button {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+.logout-button:hover {
+  text-decoration: underline;
+}

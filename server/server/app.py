@@ -1,12 +1,15 @@
 from flask import Flask
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 from server.models import favorites, rating, user, db
 from server.config import Config
 from server.controllers import all_blueprints
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+CORS(app, supports_credentials=True)
 
 jwt = JWTManager(app)
 

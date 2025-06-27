@@ -1,13 +1,13 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Auth.css';
+import { useAuth } from '../../context/AuthContext';
 
 const SignIn = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState(''); 
+  const { login } = useAuth();
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
 
   const handleSignIn = async (e) => {
     e.preventDefault();
@@ -19,18 +19,17 @@ const SignIn = () => {
         body: JSON.stringify({ username, password }),
       });
 
-      const data = await res.json();
-
-      if (res.ok) {
-        localStorage.setItem('userToken', data.access_token);
-        localStorage.setItem('username', username);
-        navigate('/');
-      } else {
-        setError(data.error || 'Login failed');
+      if (!res.ok) {
+        const errorData = await res.json();
+        alert(errorData.error || 'Login failed');
+        return;
       }
+
+      const { access_token } = await res.json();
+      login(username, access_token);
+      navigate('/');
     } catch (err) {
-      console.error('Login error:', err);
-      setError('Something went wrong. Please try again.');
+      console.error('Login failed', err);
     }
   };
 
@@ -38,7 +37,6 @@ const SignIn = () => {
     <div className="auth-container">
       <form className="auth-form" onSubmit={handleSignIn}>
         <h2>Sign In</h2>
-
         <input
           type="text"
           placeholder="Username"
@@ -46,7 +44,6 @@ const SignIn = () => {
           required
           onChange={(e) => setUsername(e.target.value)}
         />
-
         <input
           type="password"
           placeholder="Password"
@@ -54,13 +51,9 @@ const SignIn = () => {
           required
           onChange={(e) => setPassword(e.target.value)}
         />
-
-        {error && <p className="auth-error">{error}</p>}
-
         <button type="submit">Sign In</button>
-
         <p className="auth-switch">
-          Don't have an account?{' '}
+          Don’t have an account?{' '}
           <span onClick={() => navigate('/signup')}>Sign Up</span>
         </p>
       </form>
