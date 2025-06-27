@@ -5,15 +5,32 @@ import {
   fetchPopular, 
   fetchTopRated,
   fetchUpcoming,
-  fetchMoviesByGenre
+  fetchMoviesByGenre,
+  fetchGenres // Add this import
 } from '../../api/api';
 import './MoviesGrid.css';
 
 const MoviesPage = ({ filter }) => {
   const [movies, setMovies] = useState([]);
+  const [genres, setGenres] = useState([]); // Store genres here
   const [loading, setLoading] = useState(true);
   const [pageTitle, setPageTitle] = useState('Now Playing');
   
+  // Load genres on component mount
+  useEffect(() => {
+    const loadGenres = async () => {
+      try {
+        const data = await fetchGenres();
+        setGenres(data);
+      } catch (error) {
+        console.error("Error loading genres:", error);
+      }
+    };
+    
+    loadGenres();
+  }, []);
+
+  // Fetch movies based on filter
   useEffect(() => {
     const fetchMovies = async () => {
       setLoading(true);
@@ -46,7 +63,16 @@ const MoviesPage = ({ filter }) => {
         } 
         else if (filter.type === 'genre') {
           data = await fetchMoviesByGenre(filter.value);
-          title = 'Genre Movies';
+          
+          // Find genre name by ID
+          const genreName = genres.find(genre => genre.id === filter.value)?.name;
+          
+          // Set title based on found genre name
+          if (genreName) {
+            title = `${genreName} Movies`;
+          } else {
+            title = 'Genre Movies';
+          }
         }
         
         setMovies(data);
@@ -59,7 +85,7 @@ const MoviesPage = ({ filter }) => {
     };
     
     fetchMovies();
-  }, [filter]);
+  }, [filter, genres]);
 
   if (loading) {
     return (

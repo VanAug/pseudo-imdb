@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import LeftNavbar from '../Navigation/LeftNavbar';
 import MoviesPage from './MoviesPage';
-import './MoviesGrid.css'; // Import the CSS
+import './MoviesGrid.css'; 
 
 const Movie = () => {
   const [filter, setFilter] = useState({ 
