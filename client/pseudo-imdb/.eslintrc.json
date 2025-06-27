@@ -1,0 +1,16 @@
+{
+  "extends": [
+    "react-app",
+    "plugin:import/recommended"
+  ],
+  "settings": {
+    "import/resolver": {
+      "webpack": {},
+      "node": {}
+    }
+  },
+  "rules": {
+    "import/no-unresolved": "error", // Ensures imports fail if unresolved
+    "import/named": "error"
+  }
+}

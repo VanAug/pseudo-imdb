@@ -1,8 +1,13 @@
 import React from 'react'
+import LeftNavbar from '../Navigation/LeftNavbar'
+
 
 const Movie = () => {
   return (
-    <div>Movie</div>
+    <div>
+      <LeftNavbar />
+      Movie
+    </div>
   )
 }
 
