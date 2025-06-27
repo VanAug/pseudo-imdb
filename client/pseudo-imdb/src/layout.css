@@ -1,0 +1,24 @@
+.layout-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #181818;
+  color: white;
+}
+
+/* For pages with left sidebar */
+.with-sidebar {
+  margin-left: 240px; /* Matches left navbar width */
+  width: calc(100% - 240px);
+}
+
+/* For pages without left sidebar */
+.without-sidebar {
+  width: 100%;
+}
+
+/* Main content area */
+.main-content {
+  padding: 120px 20px 20px; /* Top padding matches navbar height */
+  width: 100%;
+  box-sizing: border-box;
+}

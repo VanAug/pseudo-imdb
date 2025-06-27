@@ -1,8 +1,12 @@
 import React from 'react'
+import LeftNavBar from '../Navigation/LeftNavbar'
+
 
 const Favorites = () => {
   return (
-    <div>Favorites</div>
+    <div>
+      <LeftNavBar />
+    </div>
   )
 }
 

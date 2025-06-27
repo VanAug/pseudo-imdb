@@ -21,7 +21,7 @@ const AppRoutes = () => {
           element={<Profile />}
         />
         <Route 
-          path='movie/:name'
+          path='movie/:id'
           element={<MovieInformation />}
         />
     </Routes>
