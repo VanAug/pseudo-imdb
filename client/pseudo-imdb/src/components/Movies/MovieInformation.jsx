@@ -8,10 +8,14 @@ const MovieInformation = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+
   const [movie, setMovie] = useState(null);
   const [cast, setCast] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [showRatingModal, setShowRatingModal] = useState(false);
+  const [score, setScore] = useState(5);
+  const [review, setReview] = useState('');
 
   useEffect(() => {
     const loadMovieData = async () => {
@@ -24,17 +28,12 @@ const MovieInformation = () => {
         setMovie(movieData);
         setCast(creditsData.cast.slice(0, 12));
 
-        // Check if movie is already in favorites
         if (user) {
-          const response = await fetch(`http://localhost:5000/favorites/check/${movieData.id}`, {
-            headers: {
-              'Authorization': `Bearer ${user.token}`
-            }
+          const res = await fetch(`http://localhost:5000/favorites/check/${movieData.id}`, {
+            headers: { 'Authorization': `Bearer ${user.token}` }
           });
-          if (response.ok) {
-            const data = await response.json();
-            setIsFavorite(data.is_favorite);
-          }
+          const data = await res.json();
+          setIsFavorite(data.is_favorite);
         }
       } catch (err) {
         console.error('Error loading movie details or cast:', err);
@@ -47,23 +46,15 @@ const MovieInformation = () => {
   }, [id, user]);
 
   const toggleFavorite = async () => {
-    if (!user) {
-      navigate('/signin', { state: { from: `/movie/${id}` } });
-      return;
-    }
+    if (!user) return navigate('/signin', { state: { from: `/movie/${id}` } });
 
     try {
       if (isFavorite) {
-        // DELETE favorite
         await fetch(`http://localhost:5000/favorites/${movie.id}`, {
           method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${user.token}`
-          }
+          headers: { 'Authorization': `Bearer ${user.token}` }
         });
-        console.log(`Movie ${id} removed from favorites`);
       } else {
-        // POST new favorite
         await fetch('http://localhost:5000/favorites', {
           method: 'POST',
           headers: {
@@ -73,12 +64,11 @@ const MovieInformation = () => {
           body: JSON.stringify({
             tmdb_movie_id: movie.id,
             title: movie.title,
-            poster_url: movie.poster_path 
-              ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` 
+            poster_url: movie.poster_path
+              ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
               : null
           })
         });
-        console.log(`Movie ${id} added to favorites`);
       }
       setIsFavorite(prev => !prev);
     } catch (err) {
@@ -87,13 +77,39 @@ const MovieInformation = () => {
   };
 
   const handleRateMovie = () => {
-    if (!user) {
-      navigate('/signin', { state: { from: `/movie/${id}` } });
-      return;
+    if (!user) return navigate('/signin', { state: { from: `/movie/${id}` } });
+    setShowRatingModal(true);
+  };
+
+  const submitRating = async () => {
+    if (!user) return;
+
+    try {
+      const res = await fetch('http://localhost:5000/ratings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`
+        },
+        body: JSON.stringify({
+          tmdb_movie_id: movie.id,
+          score,
+          review
+        })
+      });
+
+      if (res.ok) {
+        alert('Rating submitted!');
+        setShowRatingModal(false);
+        setScore(5);
+        setReview('');
+      } else {
+        const err = await res.json();
+        alert(err.error || 'Rating failed');
+      }
+    } catch (err) {
+      console.error('Error submitting rating:', err);
     }
-    
-    console.log(`Rate movie ${id}`);
-    // TODO: navigate or open modal
   };
 
   if (loading) return <div className="movie-info-loading">Loading...</div>;
@@ -121,18 +137,17 @@ const MovieInformation = () => {
         <p><strong>Rating:</strong> {movie.vote_average.toFixed(1)} ⭐</p>
 
         <div className="movie-actions">
-        <button
-          onClick={toggleFavorite}
-          className={isFavorite ? 'favorite-btn remove' : 'favorite-btn add'}
-        >
-          {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
-        </button>
+          <button
+            onClick={toggleFavorite}
+            className={isFavorite ? 'favorite-btn remove' : 'favorite-btn add'}
+          >
+            {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
+          </button>
 
-        {/* Always show Rate Movie button */}
-        <button onClick={handleRateMovie} className="rate-btn">
-          Rate Movie
-        </button>
-      </div>
+          <button onClick={handleRateMovie} className="rate-btn">
+            Rate Movie
+          </button>
+        </div>
 
         <div className="movie-info-cast">
           <h2>Top Cast</h2>
@@ -155,6 +170,31 @@ const MovieInformation = () => {
           </div>
         </div>
       </div>
+
+      {showRatingModal && (
+        <div className="rating-modal">
+          <div className="rating-form">
+            <h3>Rate "{movie.title}"</h3>
+            <label>Score (1–10):</label>
+            <input
+              type="number"
+              min="1"
+              max="10"
+              value={score}
+              onChange={(e) => setScore(parseInt(e.target.value))}
+            />
+            <label>Review:</label>
+            <textarea
+              value={review}
+              onChange={(e) => setReview(e.target.value)}
+            />
+            <div className="rating-actions">
+              <button onClick={submitRating}>Submit</button>
+              <button onClick={() => setShowRatingModal(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

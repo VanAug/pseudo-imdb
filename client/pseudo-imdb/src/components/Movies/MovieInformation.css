@@ -126,3 +126,130 @@
 .rate-btn:hover {
   background-color: #2563eb;
 }
+
+.rating-form {
+  margin-top: 30px;
+  padding: 20px;
+  background: #202020;
+  border-radius: 8px;
+}
+
+.rating-form label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.rating-form input[type="number"],
+.rating-form textarea {
+  width: 100%;
+  margin-top: 4px;
+  margin-bottom: 16px;
+  padding: 8px;
+  border-radius: 4px;
+  border: none;
+  background-color: #2b2b2b;
+  color: white;
+}
+
+.rating-form button {
+  padding: 10px 16px;
+  background: #1db954;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.rating-form .success-msg {
+  margin-top: 10px;
+  color: #1db954;
+}
+
+/* Rating Modal Overlay */
+.rating-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* Modal Content Box */
+.rating-form-modal {
+  background-color: #202020;
+  padding: 30px 25px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  color: white;
+}
+
+.rating-form-modal h3 {
+  margin-top: 0;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: #1db954;
+}
+
+/* Inputs inside the modal */
+.rating-form-modal label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.rating-form-modal input[type="number"],
+.rating-form-modal textarea {
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  background-color: #2b2b2b;
+  color: white;
+  font-size: 0.95rem;
+}
+
+/* Buttons */
+.rating-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.rating-actions button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  color: white;
+  font-size: 0.95rem;
+}
+
+/* Submit and Cancel Colors */
+.rating-actions button:first-child {
+  background-color: #1db954;
+}
+
+.rating-actions button:first-child:hover {
+  background-color: #17a74a;
+}
+
+.rating-actions button:last-child {
+  background-color: #e63946;
+}
+
+.rating-actions button:last-child:hover {
+  background-color: #c92333;
+}
+

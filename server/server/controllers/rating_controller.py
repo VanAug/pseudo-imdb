@@ -15,21 +15,17 @@ def create_rating():
 
     score = data.get('score')
     review = data.get('review')
-    favorite_id = data.get('favorite_id')
+    tmdb_movie_id = data.get('tmdb_movie_id')
 
-    # Validate favorite belongs to this user
-    favorite = Favorite.query.filter_by(id=favorite_id, user_id=user_id).first()
-    if not favorite:
-        return jsonify({"error": "Favorite not found or not yours"}), 404
-    
+    # Check for existing rating
     existing_rating = Rating.query.filter_by(
         user_id=user_id,
-        favorite_id=favorite_id
+        tmdb_movie_id=tmdb_movie_id
     ).first()
     if existing_rating:
         return jsonify({"error": "You've already rated this movie"}), 409
 
-    # Optional: validate score
+    # Validate score
     if not (1 <= score <= 10):
         return jsonify({"error": "Score must be between 1 and 10"}), 400
 
@@ -37,12 +33,13 @@ def create_rating():
         score=score,
         review=review,
         user_id=user_id,
-        favorite_id=favorite_id
+        tmdb_movie_id=tmdb_movie_id
     )
     db.session.add(rating)
     db.session.commit()
 
     return jsonify(rating.to_dict()), 201
+
 
 # PATCH /ratings/<int:id> - Update a rating
 @ratings_bp.route('/<int:id>', methods=['PATCH'])

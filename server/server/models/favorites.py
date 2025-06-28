@@ -10,7 +10,6 @@ class Favorite(db.Model):
     title = db.Column(db.String, nullable=False)  
     poster_url = db.Column(db.String)             
 
-    ratings = db.relationship('Rating', backref='favorite', cascade='all, delete-orphan')
     user = db.relationship('User', back_populates='favorites')
 
     def to_dict(self):

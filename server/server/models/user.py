@@ -11,7 +11,7 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     _password_hash = db.Column(db.Text, nullable=False)
 
-    ratings = db.relationship('Rating', backref='user', cascade="all, delete-orphan")
+    ratings = db.relationship('Rating', back_populates='user', cascade='all, delete-orphan')
     favorites = db.relationship('Favorite', back_populates='user', cascade="all, delete-orphan")
 
 
