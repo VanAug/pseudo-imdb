@@ -16,6 +16,7 @@ const MovieInformation = () => {
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [score, setScore] = useState(5);
   const [review, setReview] = useState('');
+  const [existingRating, setExistingRating] = useState(null);
 
   useEffect(() => {
     const loadMovieData = async () => {
@@ -29,14 +30,24 @@ const MovieInformation = () => {
         setCast(creditsData.cast.slice(0, 12));
 
         if (user) {
-          const res = await fetch(`http://localhost:5000/favorites/check/${movieData.id}`, {
-            headers: { 'Authorization': `Bearer ${user.token}` }
+          const favoriteRes = await fetch(`http://localhost:5000/favorites/check/${movieData.id}`, {
+            headers: { Authorization: `Bearer ${user.token}` }
           });
-          const data = await res.json();
-          setIsFavorite(data.is_favorite);
+          const favoriteData = await favoriteRes.json();
+          setIsFavorite(favoriteData.is_favorite);
+
+          const ratingRes = await fetch(`http://localhost:5000/ratings/check/${movieData.id}`, {
+            headers: { Authorization: `Bearer ${user.token}` }
+          });
+          if (ratingRes.ok) {
+            const ratingData = await ratingRes.json();
+            setExistingRating(ratingData);
+            setScore(ratingData.score);
+            setReview(ratingData.review);
+          }
         }
       } catch (err) {
-        console.error('Error loading movie details or cast:', err);
+        console.error('Error loading movie details, cast, or rating:', err);
       } finally {
         setLoading(false);
       }
@@ -52,14 +63,14 @@ const MovieInformation = () => {
       if (isFavorite) {
         await fetch(`http://localhost:5000/favorites/${movie.id}`, {
           method: 'DELETE',
-          headers: { 'Authorization': `Bearer ${user.token}` }
+          headers: { Authorization: `Bearer ${user.token}` }
         });
       } else {
         await fetch('http://localhost:5000/favorites', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${user.token}`
+            Authorization: `Bearer ${user.token}`
           },
           body: JSON.stringify({
             tmdb_movie_id: movie.id,
@@ -84,28 +95,33 @@ const MovieInformation = () => {
   const submitRating = async () => {
     if (!user) return;
 
+    const endpoint = existingRating
+      ? `http://localhost:5000/ratings/${existingRating.id}`
+      : `http://localhost:5000/ratings`;
+    const method = existingRating ? 'PATCH' : 'POST';
+
     try {
-      const res = await fetch('http://localhost:5000/ratings', {
-        method: 'POST',
+      const res = await fetch(endpoint, {
+        method,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${user.token}`
+          Authorization: `Bearer ${user.token}`
         },
         body: JSON.stringify({
-          tmdb_movie_id: movie.id,
+          ...(method === 'POST' ? { tmdb_movie_id: movie.id } : {}),
           score,
           review
         })
       });
 
       if (res.ok) {
-        alert('Rating submitted!');
+        const ratingData = await res.json();
+        setExistingRating(ratingData);
+        alert(existingRating ? 'Rating updated!' : 'Rating submitted!');
         setShowRatingModal(false);
-        setScore(5);
-        setReview('');
       } else {
         const err = await res.json();
-        alert(err.error || 'Rating failed');
+        alert(err.error || 'Failed to submit rating');
       }
     } catch (err) {
       console.error('Error submitting rating:', err);
@@ -145,7 +161,7 @@ const MovieInformation = () => {
           </button>
 
           <button onClick={handleRateMovie} className="rate-btn">
-            Rate Movie
+            {existingRating ? 'Change Rating' : 'Rate Movie'}
           </button>
         </div>
 
@@ -173,8 +189,8 @@ const MovieInformation = () => {
 
       {showRatingModal && (
         <div className="rating-modal">
-          <div className="rating-form">
-            <h3>Rate "{movie.title}"</h3>
+          <div className="rating-form-modal">
+            <h3>{existingRating ? 'Update Your Rating' : `Rate "${movie.title}"`}</h3>
             <label>Score (1–10):</label>
             <input
               type="number"
@@ -189,7 +205,9 @@ const MovieInformation = () => {
               onChange={(e) => setReview(e.target.value)}
             />
             <div className="rating-actions">
-              <button onClick={submitRating}>Submit</button>
+              <button onClick={submitRating}>
+                {existingRating ? 'Update Rating' : 'Submit Rating'}
+              </button>
               <button onClick={() => setShowRatingModal(false)}>Cancel</button>
             </div>
           </div>

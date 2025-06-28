@@ -7,6 +7,7 @@ const NavBar = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const { user, logout } = useAuth();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -17,10 +18,10 @@ const NavBar = () => {
   };
 
   const handleSignOut = () => {
-      logout();
-      navigate('/signin');
-    };
-    
+    logout();
+    navigate('/signin');
+  };
+
   return (
     <nav className="navbar">
       <h3 className="title">PseudoIMDb</h3>
@@ -37,12 +38,23 @@ const NavBar = () => {
 
       <div className="nav-links">
         <Link to="/" className="nav-link">Home</Link>
+
         {user ? (
-          <>
-            <Link to="/favorites" className="nav-link">Favorites</Link>
-            <Link to="/profile" className="nav-link username">👤 {user.username}</Link>
-            <button onClick={handleSignOut} className="nav-link logout-button">Sign Out</button>
-          </>
+          <div
+            className="dropdown"
+            onMouseEnter={() => setDropdownOpen(true)}
+            onMouseLeave={() => setDropdownOpen(false)}
+          >
+            <span className="nav-link username">👤 {user.username} ⏷</span>
+            {dropdownOpen && (
+              <div className="dropdown-menu">
+                <Link to="/profile" className="dropdown-item">My Profile</Link>
+                <Link to="/favorites" className="dropdown-item">Favorites</Link>
+                <Link to="/ratings" className="dropdown-item">My Ratings</Link>
+                <button onClick={handleSignOut} className="dropdown-item logout-button">Sign Out</button>
+              </div>
+            )}
+          </div>
         ) : (
           <Link to="/signin" className="nav-link">Sign In</Link>
         )}

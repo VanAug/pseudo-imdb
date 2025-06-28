@@ -87,15 +87,24 @@ def get_rated_movies():
 
     results = []
     for rating in ratings:
-        favorite = rating.favorite
         results.append({
             "rating_id": rating.id,
             "score": rating.score,
             "review": rating.review,
-            "favorite_id": favorite.id,
-            "tmdb_movie_id": favorite.tmdb_movie_id,
-            "title": favorite.title,
-            "poster_url": favorite.poster_url,
+            "tmdb_movie_id": rating.tmdb_movie_id,
         })
 
     return jsonify(results), 200
+
+
+# GET /ratings/check/<tmdb_movie_id> - Get rating for a specific movie by the current user
+@ratings_bp.route('/check/<int:tmdb_movie_id>', methods=['GET'])
+@jwt_required()
+def check_user_rating(tmdb_movie_id):
+    user_id = get_jwt_identity()
+
+    rating = Rating.query.filter_by(user_id=user_id, tmdb_movie_id=tmdb_movie_id).first()
+    if not rating:
+        return jsonify({"message": "No rating found"}), 404
+
+    return jsonify(rating.to_dict()), 200

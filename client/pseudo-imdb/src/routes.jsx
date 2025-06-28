@@ -6,6 +6,7 @@ import Profile from "./components/Profile/Profile"
 import MovieInformation from "./components/Movies/MovieInformation"
 import SignIn from './components/auth/SignIn'
 import SignUp from './components/auth/SignUp'
+import Ratings from './components/Ratings/Ratings'
 
 const AppRoutes = () => {
   return (
@@ -17,6 +18,10 @@ const AppRoutes = () => {
         <Route 
           path='favorites'
           element={<Favorites />}
+        />
+        <Route 
+          path='ratings'
+          element={<Ratings />}
         />
         <Route 
           path='profile/:id'
