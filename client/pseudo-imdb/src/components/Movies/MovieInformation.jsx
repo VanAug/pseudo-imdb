@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import './MovieInformation.css';
 import { fetchMovieCredits, fetchMovieDetails } from '../../api/api';
+import { useAuth } from '../../context/AuthContext';
 
 const MovieInformation = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [movie, setMovie] = useState(null);
   const [cast, setCast] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isFavorite, setIsFavorite] = useState(false); // Simulated favorite state
+  const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     const loadMovieData = async () => {
@@ -21,8 +24,18 @@ const MovieInformation = () => {
         setMovie(movieData);
         setCast(creditsData.cast.slice(0, 12));
 
-        // TODO: Replace this with backend call to check if it's already a favorite
-        setIsFavorite(false);
+        // Check if movie is already in favorites
+        if (user) {
+          const response = await fetch(`http://localhost:5000/favorites/check/${movieData.id}`, {
+            headers: {
+              'Authorization': `Bearer ${user.token}`
+            }
+          });
+          if (response.ok) {
+            const data = await response.json();
+            setIsFavorite(data.is_favorite);
+          }
+        }
       } catch (err) {
         console.error('Error loading movie details or cast:', err);
       } finally {
@@ -31,20 +44,54 @@ const MovieInformation = () => {
     };
 
     loadMovieData();
-  }, [id]);
+  }, [id, user]);
 
-  const toggleFavorite = () => {
-    if (isFavorite) {
-      console.log(`Movie ${id} removed from favorites`);
-      // TODO: DELETE request to backend
-    } else {
-      console.log(`Movie ${id} added to favorites`);
-      // TODO: POST request to backend
+  const toggleFavorite = async () => {
+    if (!user) {
+      navigate('/signin', { state: { from: `/movie/${id}` } });
+      return;
     }
-    setIsFavorite(prev => !prev);
+
+    try {
+      if (isFavorite) {
+        // DELETE favorite
+        await fetch(`http://localhost:5000/favorites/${movie.id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${user.token}`
+          }
+        });
+        console.log(`Movie ${id} removed from favorites`);
+      } else {
+        // POST new favorite
+        await fetch('http://localhost:5000/favorites', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${user.token}`
+          },
+          body: JSON.stringify({
+            tmdb_movie_id: movie.id,
+            title: movie.title,
+            poster_url: movie.poster_path 
+              ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` 
+              : null
+          })
+        });
+        console.log(`Movie ${id} added to favorites`);
+      }
+      setIsFavorite(prev => !prev);
+    } catch (err) {
+      console.error('Error toggling favorite:', err);
+    }
   };
 
   const handleRateMovie = () => {
+    if (!user) {
+      navigate('/signin', { state: { from: `/movie/${id}` } });
+      return;
+    }
+    
     console.log(`Rate movie ${id}`);
     // TODO: navigate or open modal
   };
@@ -74,19 +121,18 @@ const MovieInformation = () => {
         <p><strong>Rating:</strong> {movie.vote_average.toFixed(1)} ⭐</p>
 
         <div className="movie-actions">
-          <button
-            onClick={toggleFavorite}
-            className={isFavorite ? 'favorite-btn remove' : 'favorite-btn add'}
-          >
-            {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
-          </button>
+        <button
+          onClick={toggleFavorite}
+          className={isFavorite ? 'favorite-btn remove' : 'favorite-btn add'}
+        >
+          {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
+        </button>
 
-          {isFavorite && (
-            <button onClick={handleRateMovie} className="rate-btn">
-              Rate Movie
-            </button>
-          )}
-        </div>
+        {/* Always show Rate Movie button */}
+        <button onClick={handleRateMovie} className="rate-btn">
+          Rate Movie
+        </button>
+      </div>
 
         <div className="movie-info-cast">
           <h2>Top Cast</h2>

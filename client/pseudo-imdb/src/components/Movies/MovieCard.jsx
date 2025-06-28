@@ -4,8 +4,10 @@ import { Link } from 'react-router-dom';
 const MovieCard = ({ movie }) => {
   // Handle missing poster
   const posterUrl = movie.poster_path 
-    ? `https://image.tmdb.org/t/p/w300${movie.poster_path}`
-    : null;
+  ? movie.poster_path.startsWith('http')
+    ? movie.poster_path
+    : `https://image.tmdb.org/t/p/w300${movie.poster_path}`
+  : null;
   
   // Handle missing release date
   const releaseYear = movie.release_date 

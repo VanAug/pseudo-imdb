@@ -44,3 +44,10 @@ def remove_favorite(tmdb_id):
     db.session.delete(fav)
     db.session.commit()
     return jsonify({'message': 'Favorite removed'}), 200
+
+@favorites_bp.route('/favorites/check/<int:tmdb_id>', methods=['GET'])
+@jwt_required()
+def check_favorite(tmdb_id):
+    user_id = get_jwt_identity()
+    fav = Favorite.query.filter_by(user_id=user_id, tmdb_movie_id=tmdb_id).first()
+    return jsonify({'is_favorite': fav is not None}), 200

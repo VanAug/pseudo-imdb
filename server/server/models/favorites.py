@@ -21,3 +21,7 @@ class Favorite(db.Model):
             "poster_url": self.poster_url,
             "user_id": self.user_id
         }
+
+    @classmethod
+    def check_favorite(cls, user_id, tmdb_id):
+        return cls.query.filter_by(user_id=user_id, tmdb_movie_id=tmdb_id).first() is not None

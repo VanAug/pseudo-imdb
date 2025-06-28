@@ -85,6 +85,4 @@
   cursor: pointer;
   padding: 0;
 }
-.logout-button:hover {
-  text-decoration: underline;
-}
+

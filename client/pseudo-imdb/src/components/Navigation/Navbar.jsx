@@ -17,10 +17,10 @@ const NavBar = () => {
   };
 
   const handleSignOut = () => {
-    logout();
-    navigate('/signin');
-  };
-
+      logout();
+      navigate('/signin');
+    };
+    
   return (
     <nav className="navbar">
       <h3 className="title">PseudoIMDb</h3>
