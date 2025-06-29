@@ -30,13 +30,13 @@ const MovieInformation = () => {
         setCast(creditsData.cast.slice(0, 12));
 
         if (user) {
-          const favoriteRes = await fetch(`http://localhost:5000/favorites/check/${movieData.id}`, {
+          const favoriteRes = await fetch(`https://fullstack-backend-hc6q.onrender.com/favorites/check/${movieData.id}`, {
             headers: { Authorization: `Bearer ${user.token}` }
           });
           const favoriteData = await favoriteRes.json();
           setIsFavorite(favoriteData.is_favorite);
 
-          const ratingRes = await fetch(`http://localhost:5000/ratings/check/${movieData.id}`, {
+          const ratingRes = await fetch(`https://fullstack-backend-hc6q.onrender.com/ratings/check/${movieData.id}`, {
             headers: { Authorization: `Bearer ${user.token}` }
           });
           if (ratingRes.ok) {
@@ -61,12 +61,12 @@ const MovieInformation = () => {
 
     try {
       if (isFavorite) {
-        await fetch(`http://localhost:5000/favorites/${movie.id}`, {
+        await fetch(`https://fullstack-backend-hc6q.onrender.com/favorites/${movie.id}`, {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${user.token}` }
         });
       } else {
-        await fetch('http://localhost:5000/favorites', {
+        await fetch('https://fullstack-backend-hc6q.onrender.com/favorites', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -96,8 +96,8 @@ const MovieInformation = () => {
     if (!user) return;
 
     const endpoint = existingRating
-      ? `http://localhost:5000/ratings/${existingRating.id}`
-      : `http://localhost:5000/ratings`;
+      ? `https://fullstack-backend-hc6q.onrender.com/ratings/${existingRating.id}`
+      : `https://fullstack-backend-hc6q.onrender.com/ratings`;
     const method = existingRating ? 'PATCH' : 'POST';
 
     try {

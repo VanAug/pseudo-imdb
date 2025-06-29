@@ -13,7 +13,7 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const res = await fetch('http://localhost:5000/users/me', {
+      const res = await fetch('https://fullstack-backend-hc6q.onrender.com/users/me', {
         headers: { Authorization: `Bearer ${user.token}` },
       });
       const data = await res.json();
@@ -23,10 +23,10 @@ const Profile = () => {
     };
 
     const fetchStats = async () => {
-      const favRes = await fetch('http://localhost:5000/favorites', {
+      const favRes = await fetch('https://fullstack-backend-hc6q.onrender.com/favorites', {
         headers: { Authorization: `Bearer ${user.token}` },
       });
-      const ratedRes = await fetch('http://localhost:5000/ratings/movies', {
+      const ratedRes = await fetch('https://fullstack-backend-hc6q.onrender.com/ratings/movies', {
         headers: { Authorization: `Bearer ${user.token}` },
       });
 
@@ -43,7 +43,7 @@ const Profile = () => {
   }, [user]);
 
   const handleProfileUpdate = async () => {
-    const res = await fetch('http://localhost:5000/users/me', {
+    const res = await fetch('https://fullstack-backend-hc6q.onrender.com/users/me', {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ const Profile = () => {
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
-    const res = await fetch('http://localhost:5000/users/change-password', {
+    const res = await fetch('https://fullstack-backend-hc6q.onrender.com/users/change-password', {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ const Profile = () => {
 
     if (!confirmDelete) return;
 
-    const res = await fetch('http://localhost:5000/users/me', {
+    const res = await fetch('https://fullstack-backend-hc6q.onrender.com/users/me', {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${user.token}` },
     });
@@ -118,7 +118,7 @@ const Profile = () => {
     formDataUpload.append('profile_picture', file);
 
     try {
-      const res = await fetch('http://localhost:5000/users/me', {
+      const res = await fetch('https://fullstack-backend-hc6q.onrender.com/users/me', {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${user.token}` },
         body: formDataUpload,
@@ -146,7 +146,7 @@ const Profile = () => {
       <div className="profile-picture-container">
         {profile.profile_picture ? (
           <img
-            src={`http://localhost:5000/static/profile_pics/${profile.profile_picture}`}
+            src={`https://fullstack-backend-hc6q.onrender.com/static/profile_pics/${profile.profile_picture}`}
             alt="Profile"
             className="profile-picture"
           />

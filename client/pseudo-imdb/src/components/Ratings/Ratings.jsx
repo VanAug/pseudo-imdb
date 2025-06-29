@@ -16,7 +16,7 @@ const Ratings = () => {
     if (!user) return;
 
     try {
-      const res = await fetch('http://localhost:5000/ratings/movies', {
+      const res = await fetch('https://fullstack-backend-hc6q.onrender.com/ratings/movies', {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },
@@ -56,7 +56,7 @@ const Ratings = () => {
     if (!confirmDelete) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/ratings/${movie.rating_id}`, {
+      const res = await fetch(`https://fullstack-backend-hc6q.onrender.com/ratings/${movie.rating_id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${user.token}`,
@@ -87,7 +87,7 @@ const Ratings = () => {
     if (!user || !editRating) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/ratings/${editRating.rating_id}`, {
+      const res = await fetch(`https://fullstack-backend-hc6q.onrender.com/ratings/${editRating.rating_id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

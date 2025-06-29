@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: pseudo-imdb-backend
+    env: python
+    buildCommand: pip install pipenv && pipenv install --deploy --ignore-pipfile
+    startCommand: pipenv run gunicorn server.app:app
+    envVars:
+      - key: FLASK_APP
+        value: server.app
+      - key: FLASK_ENV
+        value: production
+      - key: JWT_SECRET_KEY
+        value: cR8Z3pXeYk2vF5wD7qS0aJ9lO4uI1bN6mHtWgLpVfQyUx
+      - key: SECRET_KEY
+        value: cR8Z3pXeYk2vF5wD7qS0aJ9lO4uI1bN6mHtWgLpVfQyUx
+

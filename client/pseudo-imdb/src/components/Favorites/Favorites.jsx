@@ -21,7 +21,7 @@ const Favorites = () => {
       if (!user) return;
 
       try {
-        const response = await fetch('http://localhost:5000/favorites', {
+        const response = await fetch('https://fullstack-backend-hc6q.onrender.com/favorites', {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
