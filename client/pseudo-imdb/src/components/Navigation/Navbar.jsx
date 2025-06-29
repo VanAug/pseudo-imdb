@@ -48,7 +48,7 @@ const NavBar = () => {
             <span className="nav-link username">👤 {user.username} ⏷</span>
             {dropdownOpen && (
               <div className="dropdown-menu">
-                <Link to="/profile" className="dropdown-item">My Profile</Link>
+                <Link to="/profile/:id" className="dropdown-item">My Profile</Link>
                 <Link to="/favorites" className="dropdown-item">Favorites</Link>
                 <Link to="/ratings" className="dropdown-item">My Ratings</Link>
                 <button onClick={handleSignOut} className="dropdown-item logout-button">Sign Out</button>
