@@ -2,6 +2,8 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from server.models import db 
 from server.models.user import User
+from werkzeug.utils import secure_filename
+import os
 
 users_bp = Blueprint('users', __name__, url_prefix='/users')
 
@@ -28,9 +30,11 @@ def update_user():
     if request.content_type.startswith('multipart/form-data'):
         picture_file = request.files.get("profile_picture")
         if picture_file:
-            filepath = f'static/profile_pics/{user_id}_{picture_file.filename}'
+            # Generate a secure filename
+            filename = secure_filename(f'{user_id}_{picture_file.filename}')
+            filepath = os.path.join('static', 'profile_pics', filename)
             picture_file.save(filepath)
-            user.profile_picture = f"/{filepath}"
+            user.profile_picture = filename
 
     else:
         data = request.get_json()

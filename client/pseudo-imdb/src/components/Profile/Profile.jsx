@@ -103,23 +103,37 @@ const Profile = () => {
     const file = e.target.files[0];
     if (!file) return;
 
+    // Validate file type and size
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file (JPEG, PNG, etc.)');
+      return;
+    }
+    
+    if (file.size > 2 * 1024 * 1024) { // 2MB limit
+      alert('File size too large (max 2MB)');
+      return;
+    }
+
     const formDataUpload = new FormData();
     formDataUpload.append('profile_picture', file);
 
-    const res = await fetch('http://localhost:5000/users/me', {
-      method: 'PATCH',
-      headers: {
-        Authorization: `Bearer ${user.token}`,
-      },
-      body: formDataUpload,
-    });
+    try {
+      const res = await fetch('http://localhost:5000/users/me', {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${user.token}` },
+        body: formDataUpload,
+      });
 
-    const data = await res.json();
-    if (res.ok) {
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Upload failed');
+      }
+
+      const data = await res.json();
       setProfile(data);
       updateUser(data);
-    } else {
-      alert(data.error || 'Failed to upload profile picture');
+    } catch (error) {
+      alert(error.message);
     }
   };
 
@@ -132,7 +146,7 @@ const Profile = () => {
       <div className="profile-picture-container">
         {profile.profile_picture ? (
           <img
-            src={`http://localhost:5000/static/profile_pics/${profile.profile_picture || 'default.png'}`}
+            src={`http://localhost:5000/static/profile_pics/${profile.profile_picture}`}
             alt="Profile"
             className="profile-picture"
           />
