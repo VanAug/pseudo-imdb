@@ -1,0 +1,31 @@
+.search-container {
+  padding: 40px 20px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  margin-top: 50px;
+}
+
+.search-container h2 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: #ffffff;
+  text-align: center;
+}
+
+.search-container h2 span {
+  color: #f39c12;
+}
+
+.search-loading,
+.search-no-results {
+  text-align: center;
+  color: #bbb;
+  font-size: 1rem;
+  margin-top: 50px;
+}
+
+.search-results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 20px;
+}

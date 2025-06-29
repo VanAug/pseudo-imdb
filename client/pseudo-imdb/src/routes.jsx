@@ -7,6 +7,7 @@ import MovieInformation from "./components/Movies/MovieInformation"
 import SignIn from './components/auth/SignIn'
 import SignUp from './components/auth/SignUp'
 import Ratings from './components/Ratings/Ratings'
+import Search from './components/Search/Search'
 
 const AppRoutes = () => {
   return (
@@ -38,6 +39,10 @@ const AppRoutes = () => {
         <Route
           path='/signUp'
           element={<SignUp />}
+        />
+        <Route
+          path='/search'
+          element={<Search />}
         />
     </Routes>
   )
