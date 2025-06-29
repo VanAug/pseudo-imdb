@@ -17,6 +17,7 @@ const Profile = () => {
         headers: { Authorization: `Bearer ${user.token}` },
       });
       const data = await res.json();
+      console.log('Fetched profile:', data); // ✅ ADD THIS LINE
       setProfile(data);
       setFormData({ username: data.username, email: data.email });
     };
@@ -55,7 +56,7 @@ const Profile = () => {
     if (res.ok) {
       setProfile(data);
       setIsEditing(false);
-      updateUser({ username: data.username, email: data.email }); // ✅ Update global context
+      updateUser({ username: data.username, email: data.email });
     } else {
       alert(data.error || 'Failed to update profile');
     }
@@ -98,11 +99,52 @@ const Profile = () => {
     }
   };
 
+  const handleProfilePictureChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formDataUpload = new FormData();
+    formDataUpload.append('profile_picture', file);
+
+    const res = await fetch('http://localhost:5000/users/me', {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+      body: formDataUpload,
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      setProfile(data);
+      updateUser(data);
+    } else {
+      alert(data.error || 'Failed to upload profile picture');
+    }
+  };
+
   if (!profile) return <p className="loading">Loading profile...</p>;
 
   return (
     <div className="profile-container">
-      <h2>👤 My Profile</h2>
+      <h2>My Profile</h2>
+
+      <div className="profile-picture-container">
+        {profile.profile_picture ? (
+          <img
+            src={`http://localhost:5000/static/profile_pics/${profile.profile_picture || 'default.png'}`}
+            alt="Profile"
+            className="profile-picture"
+          />
+        ) : (
+          <div className="profile-picture default-avatar">👤</div>
+        )}
+
+        <label className="upload-label">
+          Change Picture
+          <input type="file" accept="image/*" onChange={handleProfilePictureChange} />
+        </label>
+      </div>
 
       <div className="profile-section">
         <label>Username:</label>

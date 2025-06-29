@@ -6,7 +6,7 @@ from server.models import favorites, rating, user, db
 from server.config import Config
 from server.controllers import all_blueprints
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static', static_folder='static')
 app.config.from_object(Config)
 
 CORS(app, supports_credentials=True)

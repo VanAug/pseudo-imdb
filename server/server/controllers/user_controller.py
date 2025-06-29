@@ -25,15 +25,23 @@ def update_user():
     if not user:
         return jsonify({"error": "User not found"}), 404
 
-    data = request.get_json()
+    if request.content_type.startswith('multipart/form-data'):
+        picture_file = request.files.get("profile_picture")
+        if picture_file:
+            filepath = f'static/profile_pics/{user_id}_{picture_file.filename}'
+            picture_file.save(filepath)
+            user.profile_picture = f"/{filepath}"
 
-    if "username" in data:
-        user.username = data["username"]
-    if "email" in data:
-        user.email = data["email"]
+    else:
+        data = request.get_json()
+        if "username" in data:
+            user.username = data["username"]
+        if "email" in data:
+            user.email = data["email"]
 
     db.session.commit()
     return jsonify(user.to_dict()), 200
+
 
 # DELETE /users/me - delete account (optional)
 @users_bp.route('/me', methods=['DELETE'])
